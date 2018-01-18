@@ -22,8 +22,6 @@ if not os.path.exists(CAR_DATA):
   with open(CAR_DATA, "wb") as f:
     f.write(raw)
 
-#x_vals = []
-
 # unacc = 1
 # acc = 2
 # good = 3
@@ -42,14 +40,14 @@ with open(CAR_DATA) as inf:
       safety = int(data_converter.convert_safety(safety))
       acceptability_value = int(data_converter.convert_acceptability(acceptability_value))
 
-      d_vals.append([buying, maint, acceptability_value])
+      d_vals.append([buying, maint, doors, acceptability_value])
 
 x_vals = np.array([[x[0], x[1], x[2]] for x in d_vals])
 
-y_vals1 = np.array([1 if y==1 else -1 for y in d_vals])
-y_vals2 = np.array([1 if y==2 else -1 for y in d_vals])
-y_vals3 = np.array([1 if y==3 else -1 for y in d_vals])
-y_vals4 = np.array([1 if y==4 else -1 for y in d_vals])
+y_vals1 = np.array([1 if y[2]==1 else -1 for y in d_vals])
+y_vals2 = np.array([1 if y[2]==2 else -1 for y in d_vals])
+y_vals3 = np.array([1 if y[2]==3 else -1 for y in d_vals])
+y_vals4 = np.array([1 if y[2]==4 else -1 for y in d_vals])
 
 
 y_vals = np.array([y_vals1, y_vals2, y_vals3, y_vals4])
