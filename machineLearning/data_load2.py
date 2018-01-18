@@ -190,26 +190,24 @@ grid_predictions = grid_predictions.reshape(xx.shape)
 
 # Plot points and grid
 
-fig = plt.figure(figsize=(8, 8))
-ax = fig.gca(projection='3d')
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
 
 n = len(x_vals2)
 
 xs = []
 yz = []
-zs = []
-for x in x_values:
+zs =[]
+for x in x_vals2:
     xs.append(x[0])
     yz.append(x[1])
     zs.append(x[2])
 
-ax.scatter(xs, yz, zs, c=c, marker=m)
-
-ax.set_xlim3d(0, 4)
-ax.set_ylim3d(0, 4)
-ax.set_zlim3d(0, 4)
-
-#plt.contourf(xx, yy, grid_predictions, cmap=plt.cm.Paired, alpha=0.8)
+ax.scatter(xs, yz, zs, c="r", marker="o")
+ax.set_xlabel('X Label')
+ax.set_ylabel('Y Label')
+ax.set_zlabel('Z Label')
+plt.contourf(xx, yy, zz, grid_predictions, cmap=plt.cm.Paired, alpha=0.8)
 #plt.plot(class1_x, class1_y, 'ro', label='unacc')
 #plt.plot(class2_x, class2_y, 'kx', label='acc')
 #plt.plot(class3_x, class3_y, 'gv', label='good')
