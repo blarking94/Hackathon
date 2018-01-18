@@ -4,6 +4,7 @@ import tensorflow as tf
 import math
 import numpy as np
 import random
+import matplotlib.pyplot as plt
 
 import config
 import data_converter
@@ -78,7 +79,7 @@ for x in x_vals:
         class2_y.append([x[1]])
     elif x[2] == 3:
         class3_x.append([x[0]])
-        class4_y.append([x[1]])
+        class3_y.append([x[1]])
     elif x[2] == 4:
         class4_x.append([x[0]])
         class4_y.append([x[1]])
@@ -86,25 +87,12 @@ for x in x_vals:
     #x.pop()
     #print(x)
 
-array_len = len(x_vals)
-new_x_vals = x_vals.resize(5, 2)
+x_vals2 = np.delete(x_vals, np.s_[2:], axis=1)
 
-for x in new_x_vals:
+for x in x_vals2:
     print(x)
 
-x_vals2 = []
-i = 0
-#for x, (k,v) in enumerate(x_vals):
-    #print("k {}, v {} ".format(k,v))
-
-
-    #x_vals2.append(["{} {}".format(k,x)])
-    #i = i+1
-
-#print(x_vals2)
-
-# Declare batch size
-batch_size = 50
+batch_size = 17
 
 # Initialize placeholders
 x_data = tf.placeholder(shape=[None, 2], dtype=tf.float32)
@@ -157,17 +145,9 @@ sess.run(init)
 loss_vec = []
 batch_accuracy = []
 for i in range(100):
-    rand_index = np.random.choice(len(x_vals), size=batch_size)
+    rand_index = np.random.choice(len(x_vals2), size=batch_size)
 
-    #rand_index = np.random.randint(low = 0, high = len(x_vals), size = batch_size)
-    #rand_index = random.randint(1,len(x_vals)-1)
-
-    print("here")
-    #print(y_vals)
-    #print(rand_index)
-    #print(y_vals[:,rand_index])
-
-    rand_x = x_vals[rand_index]
+    rand_x = x_vals2[rand_index]
     rand_y = y_vals[:,rand_index]
     sess.run(train_step, feed_dict={x_data: rand_x, y_target: rand_y})
 
@@ -184,8 +164,8 @@ for i in range(100):
         print('Loss = ' + str(temp_loss))
 
 # Create a mesh to plot points in
-x_min, x_max = x_vals[:, 0].min() - 1, x_vals[:, 0].max() + 1
-y_min, y_max = x_vals[:, 1].min() - 1, x_vals[:, 1].max() + 1
+x_min, x_max = x_vals2[:, 0].min() - 1, x_vals2[:, 0].max() + 1
+y_min, y_max = x_vals2[:, 1].min() - 1, x_vals2[:, 1].max() + 1
 xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02),
                      np.arange(y_min, y_max, 0.02))
 grid_points = np.c_[xx.ravel(), yy.ravel()]
@@ -204,8 +184,8 @@ plt.title('Gaussian SVM Results on Car Data')
 plt.xlabel('Buying')
 plt.ylabel('MainT')
 plt.legend(loc='lower right')
-plt.ylim([-0.5, 3.0])
-plt.xlim([3.5, 8.5])
+plt.ylim([0, 4])
+plt.xlim([0, 4])
 plt.show()
 
 # Plot batch accuracy
