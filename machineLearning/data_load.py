@@ -1,8 +1,10 @@
 import os
 from six.moves.urllib.request import urlopen
 import tensorflow as tf
+import math
 
 import config
+import data_converter
 
 # Data sets
 CAR_DATA = "car_training.csv"
@@ -19,29 +21,36 @@ def main():
   with tf.Session() as sess:
     sess.run( tf.global_variables_initializer())
 
-    features = tf.placeholder(tf.string, shape=[6], name='features')
+    features = tf.placeholder(tf.int32, shape=[6], name='features')
     acceptability = tf.placeholder(tf.string, name='acceptability')
-    #total = tf.reduce_sum(features, name='total')
 
     printerop = tf.Print(acceptability, [features], name='printer')
+
+    total_data = []
 
     with open(CAR_DATA) as inf:
         for line in inf:
             # Read data, using python, into our features
-            print(line)
             buying, maint, doors, persons, lug_boot, safety, acceptability_value = line.strip().split(",")
 
-            buying = str(buying)
-            maint = str(maint)
-            doors = str(doors)
-            persons = str(persons)
-            lug_boot = str(lug_boot)
-            safety = str(safety)
+            buying = int(data_converter.convert_buying(buying))
+            maint = int(data_converter.convert_maint(maint))
+            doors = int(data_converter.convert_doors(doors))
+            persons = int(data_converter.convert_persons(persons))
+            lug_boot = int(data_converter.convert_lug_boot(lug_boot))
+            safety = int(data_converter.convert_safety(safety))
 
             # Run the Print ob
-            print("read in data" + buying + "========================" + maint)
             total = sess.run(printerop, feed_dict={features: [buying, maint, doors, persons, lug_boot, safety], acceptability:acceptability_value})
+            total_data.append(total)
             print(acceptability_value, features)
+
+    # Split Data into training and test
+    #training_data_size = math.floor(total_data.size() * 0.7)
+
+    #training_data = total_data[:training_data_size]
+    #test_data = total_data[training_data_size:]
+
 
 
 main()
