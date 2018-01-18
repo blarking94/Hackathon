@@ -28,6 +28,23 @@ def main():
 
     total_data = []
 
+    y_vals = np.array(["unacc", "acc", "good", "vgood"])
+
+
+    # Declare batch size
+    batch_size = 50
+
+    # Initialize placeholders
+    x_data = tf.placeholder(shape=[None, 6], dtype=tf.float32)
+    y_target = tf.placeholder(shape=[4, None], dtype=tf.float32)
+    prediction_grid = tf.placeholder(shape=[None, 6], dtype=tf.float32)
+
+
+
+
+
+
+
     with open(CAR_DATA) as inf:
         for line in inf:
             # Read data, using python, into our features

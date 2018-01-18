@@ -42,3 +42,11 @@ def convert_safety(value):
     'med': 2,
     'high': 3
   }[value]
+
+def convert_acceptability(value):
+    return{
+      'unacc' : 1,
+      'acc' : 2,
+      'good' : 3,
+      'vgood' : 4
+    }[value]
