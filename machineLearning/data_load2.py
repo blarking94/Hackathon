@@ -5,6 +5,7 @@ import math
 import numpy as np
 import random
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 import config
 import data_converter
@@ -42,60 +43,68 @@ with open(CAR_DATA) as inf:
 
       d_vals.append([buying, maint, doors, acceptability_value])
 
-x_vals = np.array([[x[0], x[1], x[2]] for x in d_vals])
+x_vals = np.array([[x[0], x[1], x[2], x[3]] for x in d_vals])
 
-y_vals1 = np.array([1 if y[2]==1 else -1 for y in d_vals])
-y_vals2 = np.array([1 if y[2]==2 else -1 for y in d_vals])
-y_vals3 = np.array([1 if y[2]==3 else -1 for y in d_vals])
-y_vals4 = np.array([1 if y[2]==4 else -1 for y in d_vals])
+y_vals1 = np.array([1 if y[3]==1 else -1 for y in d_vals])
+y_vals2 = np.array([1 if y[3]==2 else -1 for y in d_vals])
+y_vals3 = np.array([1 if y[3]==3 else -1 for y in d_vals])
+y_vals4 = np.array([1 if y[3]==4 else -1 for y in d_vals])
 
 
 y_vals = np.array([y_vals1, y_vals2, y_vals3, y_vals4])
 
-print("PRINTING Y VALS")
-print(y_vals)
+z_vals = np.array([[x[2]] for x in d_vals])
 
+print("PRINTING Z VALUES")
+print(z_vals)
 
 class1_y = []
 class1_x = []
+class1_z = []
 class2_y = []
 class2_x = []
+class2_z = []
 class3_y = []
 class3_x = []
+class3_z = []
 class4_y = []
 class4_x = []
+class4_z = []
 
 for x in x_vals:
 
     if x[2] == 1:
         class1_x.append([x[0]])
-        #class1_x.append(x[0] for i,x in enumerate(x_vals))
-        #class1_y.append(x[1] for i,x in enumerate(x_vals))
         class1_y.append([x[1]])
+        class1_z.append([x[2]])
     elif x[2] == 2:
         class2_x.append([x[0]])
         class2_y.append([x[1]])
+        class2_z.append([x[2]])
     elif x[2] == 3:
         class3_x.append([x[0]])
         class3_y.append([x[1]])
+        class3_z.append([x[2]])
     elif x[2] == 4:
         class4_x.append([x[0]])
         class4_y.append([x[1]])
+        class4_z.append([x[2]])
 
     #x.pop()
     #print(x)
 
-x_vals2 = np.delete(x_vals, np.s_[2:], axis=1)
+x_vals2 = np.delete(x_vals, np.s_[3:], axis=1)
 
-for x in x_vals2:
+for x in z_vals:
     print(x)
 
-batch_size = 17
+batch_size = 50
 
 # Initialize placeholders
-x_data = tf.placeholder(shape=[None, 2], dtype=tf.float32)
+x_data = tf.placeholder(shape=[None, 3], dtype=tf.float32)
+z_data = tf.placeholder(shape=[None, 3], dtype=tf.float32)
 y_target = tf.placeholder(shape=[4, None], dtype=tf.float32)
-prediction_grid = tf.placeholder(shape=[None, 2], dtype=tf.float32)
+prediction_grid = tf.placeholder(shape=[None, 3], dtype=tf.float32)
 
 # Create variables for svm
 b = tf.Variable(tf.random_normal(shape=[4,batch_size]))
@@ -147,13 +156,16 @@ for i in range(100):
 
     rand_x = x_vals2[rand_index]
     rand_y = y_vals[:,rand_index]
-    sess.run(train_step, feed_dict={x_data: rand_x, y_target: rand_y})
+    rand_z = x_vals2[rand_index]
 
-    temp_loss = sess.run(loss, feed_dict={x_data: rand_x, y_target: rand_y})
+    sess.run(train_step, feed_dict={x_data: rand_x, y_target: rand_y, z_data: rand_z})
+
+    temp_loss = sess.run(loss, feed_dict={x_data: rand_x, y_target: rand_y, z_data: rand_z})
     loss_vec.append(temp_loss)
 
     acc_temp = sess.run(accuracy, feed_dict={x_data: rand_x,
                                              y_target: rand_y,
+                                             z_data: rand_z,
                                              prediction_grid:rand_x})
     batch_accuracy.append(acc_temp)
 
@@ -164,26 +176,50 @@ for i in range(100):
 # Create a mesh to plot points in
 x_min, x_max = x_vals2[:, 0].min() - 1, x_vals2[:, 0].max() + 1
 y_min, y_max = x_vals2[:, 1].min() - 1, x_vals2[:, 1].max() + 1
-xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02),
-                     np.arange(y_min, y_max, 0.02))
-grid_points = np.c_[xx.ravel(), yy.ravel()]
+z_min, z_max = x_vals2[:, 2].min() - 1, x_vals2[:, 2].max() + 1
+
+xx, yy, zz = np.meshgrid(np.arange(x_min, x_max, 0.02),
+                     np.arange(y_min, y_max, 0.02),
+                     np.arange(z_min, z_max, 0.02))
+grid_points = np.c_[xx.ravel(), yy.ravel(), zz.ravel()]
 grid_predictions = sess.run(prediction, feed_dict={x_data: rand_x,
                                                    y_target: rand_y,
+                                                   z_data: rand_z,
                                                    prediction_grid: grid_points})
 grid_predictions = grid_predictions.reshape(xx.shape)
 
 # Plot points and grid
-plt.contourf(xx, yy, grid_predictions, cmap=plt.cm.Paired, alpha=0.8)
-plt.plot(class1_x, class1_y, 'ro', label='unacc')
-plt.plot(class2_x, class2_y, 'kx', label='acc')
-plt.plot(class3_x, class3_y, 'gv', label='good')
-plt.plot(class4_x, class4_y, 'gx', label='vgood')
-plt.title('Gaussian SVM Results on Car Data')
-plt.xlabel('Buying')
-plt.ylabel('MainT')
-plt.legend(loc='lower right')
-plt.ylim([0, 4])
-plt.xlim([0, 4])
+
+fig = plt.figure(figsize=(8, 8))
+ax = fig.gca(projection='3d')
+
+n = len(x_vals2)
+
+xs = []
+yz = []
+zs = []
+for x in x_values:
+    xs.append(x[0])
+    yz.append(x[1])
+    zs.append(x[2])
+
+ax.scatter(xs, yz, zs, c=c, marker=m)
+
+ax.set_xlim3d(0, 4)
+ax.set_ylim3d(0, 4)
+ax.set_zlim3d(0, 4)
+
+#plt.contourf(xx, yy, grid_predictions, cmap=plt.cm.Paired, alpha=0.8)
+#plt.plot(class1_x, class1_y, 'ro', label='unacc')
+#plt.plot(class2_x, class2_y, 'kx', label='acc')
+#plt.plot(class3_x, class3_y, 'gv', label='good')
+#plt.plot(class4_x, class4_y, 'gx', label='vgood')
+#plt.title('Gaussian SVM Results on Car Data')
+#plt.xlabel('Buying')
+#plt.ylabel('MainT')
+#plt.legend(loc='lower right')
+#plt.ylim([0, 4])
+#plt.xlim([0, 4])
 plt.show()
 
 # Plot batch accuracy
