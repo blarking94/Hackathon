@@ -19,7 +19,7 @@ def main():
   with tf.Session() as sess:
     sess.run( tf.global_variables_initializer())
 
-    features = tf.placeholder(tf.int32, shape=[6], name='features')
+    features = tf.placeholder(tf.string, shape=[6], name='features')
     acceptability = tf.placeholder(tf.string, name='acceptability')
     #total = tf.reduce_sum(features, name='total')
 
@@ -29,7 +29,7 @@ def main():
         for line in inf:
             # Read data, using python, into our features
             print(line)
-            buying, maint, doors, persons, lug_boot, safety, acceptability = line.strip().split(",")
+            buying, maint, doors, persons, lug_boot, safety, acceptability_value = line.strip().split(",")
 
             buying = str(buying)
             maint = str(maint)
@@ -39,9 +39,9 @@ def main():
             safety = str(safety)
 
             # Run the Print ob
-            print("read in data")
-            total = sess.run(printerop, feed_dict={features: [buying, maint, doors, persons, lug_boot, safety], acceptability:acceptability})
-            print(acceptability, total)
+            print("read in data" + buying + "========================" + maint)
+            total = sess.run(printerop, feed_dict={features: [buying, maint, doors, persons, lug_boot, safety], acceptability:acceptability_value})
+            print(acceptability_value, features)
 
 
 main()
