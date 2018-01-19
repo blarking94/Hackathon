@@ -1,8 +1,6 @@
 import axios from 'axios'
 
 export function submitDetailsApi(action){
-    console.log("HITTING API")
-    console.log(action)
     return axios.post('/submitDetails?roleTitle='+action.roleTitle
     +"&roleLevel=" + action.roleLevel
     +"&industryExpetise=" + action.industryExpetise

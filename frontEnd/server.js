@@ -11,7 +11,6 @@ const app = express();
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
 app.post('/submitDetails', function(req, response) {
-      console.log(req.query)
       var result = postDetails.postDetails(req.query, function callback(request, res){
         response.send(request)
       });

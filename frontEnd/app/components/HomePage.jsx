@@ -29,8 +29,6 @@ class HomePage extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-      console.log("getting new props")
-      console.log(nextProps.chance)
       if (nextProps.chance != undefined || next.props != null){
         this.props.history.push({
             pathname: '/review',
