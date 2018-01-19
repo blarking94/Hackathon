@@ -18,7 +18,7 @@ CAR_DATA_URL = config.CAR_DATA_URL
 def main():
   # If the training and test sets aren't stored locally, download them.
   if not os.path.exists(CAR_DATA):
-    raw = urlopen(IRIS_TRAINING_URL).read()
+    raw = urlopen(CAR_DATA_URL).read()
     with open(CAR_DATA_URL, "wb") as f:
       f.write(raw)
 
