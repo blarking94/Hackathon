@@ -1,7 +1,3 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import os
 from six.moves.urllib.request import urlopen
 
@@ -66,7 +62,7 @@ def main():
   i= 0
   for x in d_vals:
     y = np.random.randint(low=0, high=100)
-    if y > 70:
+    if y > 60:
           test_values.append(x)
           test_keys.append(t_vals[i])
     else:
@@ -75,18 +71,9 @@ def main():
 
     i = i+1
 
- # rand_index = np.random.choice(len(d_vals), size=1200)
- # test_values =d_vals[]
- # train_values = d_vals[:,rand_index]
- # test_keys = t_vals[rand_index]
- # train_keys = t_vals[:,rand_index]
- # print(np.array(rand_index))
-
-
   print(len(train_values))
   print(len(test_values))
-  #training_set = tf.data.Dataset.from_tensor_slices(d_vals)
-  #print(training_set)
+
   # Define the training inputs
   train_input_fn = tf.estimator.inputs.numpy_input_fn(
       x={"x": np.array(train_values)},

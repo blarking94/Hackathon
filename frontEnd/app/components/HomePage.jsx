@@ -151,8 +151,6 @@ class HomePage extends Component {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  print("mapping state to props")
-  print(state)
   return {
     chance: state.chance
   }
