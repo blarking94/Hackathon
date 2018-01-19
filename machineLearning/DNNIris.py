@@ -37,7 +37,7 @@ def main():
       target_dtype=np.int,
       features_dtype=np.float32)
 
-  print(training_set)
+ # print(training_set)
 
   # Specify that all features have real-value data
   feature_columns = [tf.feature_column.numeric_column("x", shape=[4])]
@@ -47,6 +47,11 @@ def main():
                                           hidden_units=[10, 20, 10],
                                           n_classes=3,
                                           model_dir="/tmp/iris_model")
+
+  print("PRINTING TRAINING SET")
+  print(np.array(training_set.data))
+  print("PRINTING TRAINING SET TARGET")
+  print(np.array(training_set.target))
   # Define the training inputs
   train_input_fn = tf.estimator.inputs.numpy_input_fn(
       x={"x": np.array(training_set.data)},

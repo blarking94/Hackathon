@@ -24,7 +24,7 @@ def main():
 
   # Load Data sets
   d_vals = []
-  t_vlas = []
+  t_vals = []
   with open(CAR_DATA) as inf:
       for line in inf:
         # Read data, using python, into our features
@@ -36,31 +36,32 @@ def main():
         persons = int(data_converter.convert_persons(persons))
         lug_boot = int(data_converter.convert_lug_boot(lug_boot))
         safety = int(data_converter.convert_safety(safety))
-        acceptability_value = int(data_converter.convert_acceptability(acceptability_value))
 
-        d_vals.append([buying, maint, doors, persons, lug_boot, safety, acceptability_value])
-        t_vlas.append([acceptability_value])
+        d_vals.append([buying, maint, doors, persons, lug_boot, safety])
+        t_vals.append(acceptability_value)
 
   # Specify that all features have real-value data
   feature_columns = [tf.feature_column.numeric_column("x", shape=[6])]
 
-  # Build 3 layer DNN with 10, 20, 10 units respectively.
+  # Build 4 layer DNN with 10, 20, 10 units respectively.
   classifier = tf.estimator.DNNClassifier(feature_columns=feature_columns,
                                           hidden_units=[10, 20, 10],
                                           n_classes=4,
+                                          label_vocabulary=["unacc","acc","good","vgood"],
                                           model_dir="/tmp/car_model")
-  # Load datasets.
-  filenames = [CAR_DATA]
-  dataset = tf.data.TextLineDataset(filenames)
 
-  print(dataset)
+
+  print("PRINTING TRAINING SET")
+  print(np.array(d_vals))
+  print("PRINTING TRAINING SET TARGET")
+  print(np.array(t_vals))
 
   #training_set = tf.data.Dataset.from_tensor_slices(d_vals)
   #print(training_set)
   # Define the training inputs
   train_input_fn = tf.estimator.inputs.numpy_input_fn(
-      x={"x": tf.stack(d_vals[:1500])},
-      y=tf.stack(t_vlas[:1500]),
+      x={"x": np.array(d_vals)},
+      y=np.array(t_vals),
       num_epochs=None,
       shuffle=True)
 
@@ -69,8 +70,8 @@ def main():
 
   # Define the test inputs
   test_input_fn = tf.estimator.inputs.numpy_input_fn(
-     x={"x": tf.stack(d_vals[1500:])},
-     y=tf.stack(t_vlas[1500:]),
+      x={"x": np.array(d_vals)},
+      y=np.array(t_vals),
       num_epochs=1,
       shuffle=False)
 
