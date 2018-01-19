@@ -1,0 +1,8 @@
+.home_page_hr {
+  border-width: 2px;
+  border-color: rgb(51,102,153);
+}
+
+#submit_button {
+  float:right;
+}

@@ -1,0 +1,22 @@
+.page-header {
+  height: 100px;
+}
+#header_box {
+  background-color: rgb(51,102,153);
+}
+
+#header_title {
+  color: white;
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+  margin-bottom: 0px;
+}
+
+
+#header_image {
+  height: 50px;
+  width: auto;
+  position: absolute;
+  bottom: 5px;
+}
