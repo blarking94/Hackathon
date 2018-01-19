@@ -1,20 +1,12 @@
 var request = require('request');
 
 var postDetails = {
-  postDetails: function(query){
-    return new Promise((resolve, reject) => {
-        request
-            .get("127.0.0.1:8002/test")
-            .set('Accept', 'text/plain')
-            .end(function (err, response) {
-                if(response.statusCode == 200){
-                  resolve(response.body);
-                } else if(response.statusCode && response.statusCode !== 200){
-                  reject({statusCode: response.statusCode, text: (response.body)});
-                }
-            });
-    });
-  }
+  postDetails: function(query, callback){
+        request.post('http://127.0.0.1:8002/test', {form:{roleTitle:query.roleTitle,roleLevel:query.roleLevel,industryExpetise:query.industryExpetise,technologyExpetise:query.technologyExpetise,gallup:query.gallup,certifications:query.certifications,education:query.education,years:query.years}}, function (error, response, body) {
+          callback(body)
+          return(body)
+        });
+      }
 }
 
 module.exports = postDetails;

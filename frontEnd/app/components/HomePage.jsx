@@ -2,6 +2,7 @@ import React , {Component} from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
 import { connect } from 'react-redux';
+import {withRouter} from "react-router-dom"
 
 import * as commonActions from '../constants/commonActions'
 
@@ -18,11 +19,26 @@ class HomePage extends Component {
         industryExpetise : "",
         technologyExpetise : "",
         gallup : "",
-        certifications : ""
+        certifications : "",
+        education : "",
+        years : ""
       }
 
       this.onButtonClick = this.onButtonClick.bind(this);
       this.onFormUpdate = this.onFormUpdate.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+      console.log("getting new props")
+      console.log(nextProps.chance)
+      if (nextProps.chance != undefined || next.props != null){
+        this.props.history.push({
+            pathname: '/review',
+            state: {
+                chance: nextProps.chance
+            }
+        })
+      }
     }
 
     onFormUpdate(evt){
@@ -37,7 +53,9 @@ class HomePage extends Component {
         this.state.industryExpetise,
         this.state.technologyExpetise,
         this.state.gallup,
-        this.state.certifications
+        this.state.certifications,
+        this.state.education,
+        this.state.years,
       )
     }
 
@@ -56,45 +74,69 @@ class HomePage extends Component {
                   </div>
                   <div className="form-group">
                     <label htmlFor="roleLevel">Level:</label>
-                    <input type="password" className="form-control" id="roleLevel" onChange={(evt) => this.onFormUpdate(evt)}/>
+                    <input type="text" className="form-control" id="roleLevel" onChange={(evt) => this.onFormUpdate(evt)}/>
                   </div>
                   <hr className="home_page_hr"/>
                   <div className="form-group">
                     <label htmlFor="industryExpetise">Industry Expertise:</label>
                     <select className="form-control" id="industryExpetise" onChange={(evt) => this.onFormUpdate(evt)}>
                       <option value="" defaultValue disabled hidden>Choose here</option>
-                      <option>SAP</option>
-                      <option>Hanna</option>
-                      <option>Something Else</option>
+                      <option value="1">SAP</option>
+                      <option value="2">Hanna</option>
+                      <option value="3">Big Data</option>
+                      <option value="4">Security</option>
                     </select>
                   </div>
                   <div className="form-group">
                     <label htmlFor="technologyExpetise">Technology Expertise:</label>
                     <select className="form-control" id="technologyExpetise" onChange={(evt) => this.onFormUpdate(evt)}>
                       <option value="" defaultValue disabled hidden>Choose here</option>
-                      <option>Java</option>
-                      <option>HTML</option>
-                      <option>Python</option>
+                      <option value="1">Java</option>
+                      <option value="2">HTML</option>
+                      <option value="3">Python</option>
+                      <option value="4">SQL</option>
                     </select>
                   </div>
                   <div className="form-group">
                     <label htmlFor="gallup">GALLUP Strength:</label>
                     <select className="form-control" id="gallup" onChange={(evt) => this.onFormUpdate(evt)}>
                       <option value="" defaultValue disabled hidden>Choose here</option>
-                      <option>People Person</option>
-                      <option>Go Getter</option>
-                      <option>Smart Cookie</option>
+                      <option value="1">People Person</option>
+                      <option value="2">Go Getter</option>
+                      <option value="3">Personal</option>
+                      <option value="4">Kind</option>
                     </select>
                   </div>
                   <div className="form-group">
                     <label htmlFor="certifications">Certifications:</label>
                     <select className="form-control" id="certifications" onChange={(evt) => this.onFormUpdate(evt)}>
                       <option value="" defaultValue disabled hidden>Choose here</option>
-                      <option>Spark Certi</option>
-                      <option>Hadoop Certi</option>
-                      <option>Java Certi</option>
+                      <option value="1">Spark Certi</option>
+                      <option value="2">Hadoop Certi</option>
+                      <option value="3">Java Certi</option>
                     </select>
                   </div>
+
+                  <div className="form-group">
+                    <label htmlFor="years">Years at Accenture:</label>
+                    <select className="form-control" id="years" onChange={(evt) => this.onFormUpdate(evt)}>
+                      <option value="" defaultValue disabled hidden>Choose here</option>
+                      <option value="1">1-3</option>
+                      <option value="2">3-5</option>
+                      <option value="3">5+</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="education">Education:</label>
+                    <select className="form-control" id="education" onChange={(evt) => this.onFormUpdate(evt)}>
+                      <option value="" defaultValue disabled hidden>Choose here</option>
+                      <option value="1">Bsc</option>
+                      <option value="2">Msc</option>
+                      <option value="3">PHD</option>
+                    </select>
+                  </div>
+
                   <hr className="home_page_hr"/>
                  </div>
               </div>
@@ -111,15 +153,17 @@ class HomePage extends Component {
 };
 
 const mapStateToProps = (state, ownProps) => {
+  print("mapping state to props")
+  print(state)
   return {
-    subitted: null
+    chance: state.chance
   }
 }
 
 function mapDispatchToProps(dispatch){
   return {
-      submitDetails: (roleTitle, roleLevel, industryExpetise, technologyExpetise, gallup, certifications) => dispatch(commonActions.submitDetails(roleTitle, roleLevel, industryExpetise, technologyExpetise, gallup, certifications))
+      submitDetails: (roleTitle, roleLevel, industryExpetise, technologyExpetise, gallup, certifications, education, years) => dispatch(commonActions.submitDetails(roleTitle, roleLevel, industryExpetise, technologyExpetise, gallup, certifications, education, years))
   };
 }
 
-export default  connect(mapStateToProps, mapDispatchToProps)(HomePage);
+export default  connect(mapStateToProps, mapDispatchToProps)(withRouter(HomePage));

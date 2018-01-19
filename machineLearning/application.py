@@ -1,20 +1,31 @@
 from wsgiref.simple_server import make_server
+import sys
+import DNNCar
 
-# Every WSGI application must have an application object - a callable
-# object that accepts two arguments. For that purpose, we're going to
-# use a function (note that you're not limited to a function, you can
-# use a class for example). The first argument passed to the function
-# is a dictionary containing CGI-style environment variables and the
-# second variable is the callable object (see PEP 333).
 def hello_world_app(environ, start_response):
 
     path    = environ['PATH_INFO']
     method  = environ['REQUEST_METHOD']
     if method == 'POST':
         if path.startswith('/test'):
+            the_classification = ""
             try:
                 request_body_size = int(environ['CONTENT_LENGTH'])
                 request_body = environ['wsgi.input'].read(request_body_size)
+                print(request_body)
+                variables = request_body.decode("utf-8").split('&')
+                i = 0
+                values = []
+                for var in variables:
+                    if i is not 0 and i is not 1:
+                        string = var.split("=")
+                        values.append(int(string[1]))
+                    else:
+                        i = i + 1
+
+                returned_classification = DNNCar.classifyNew(values)
+                returned_array = returned_classification[0]
+                the_classification = returned_array[0]
             except (TypeError, ValueError):
                 request_body = "0"
             try:
@@ -24,28 +35,28 @@ def hello_world_app(environ, start_response):
             status = '200 OK'
             headers = [('Content-type', 'text/plain')]
             start_response(status, headers)
-            return [b"Hello World Post"]
+            print (the_classification)
+            return [the_classification]
     else:
-        status = '200 OK'  # HTTP Status
-        headers = [('Content-type', 'text/plain')]  # HTTP Headers
-        start_response(status, headers)
+        response_body = b"hello world"
+
+        status = '200 OK'
+
+        response_headers = [
+            ('Content-Type', 'text/html'),
+            ('Content-Length', str(len(response_body)))
+        ]
+
+        start_response(status, response_headers)
 
         # The returned object is going to be printed
-        return [b"Hello World"]
-
-
-
-
-
-    #status = '200 OK'  # HTTP Status
-    #headers = [('Content-type', 'text/plain; charset=utf-8')]  # HTTP Headers
-    #start_response(status, headers)
-
-    # The returned object is going to be printed
-    #return [b"Hello World"]
+        return [response_body]
 
 with make_server('', 8002, hello_world_app) as httpd:
-    print("Serving on port 8002...")
+    DNNCar.main()
+    sys.stdout.write("Serving on Port 8002")
+    print("Serving on Port 8002")
+
 
     # Serve until process is killed
     httpd.serve_forever()

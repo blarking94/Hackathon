@@ -4,17 +4,17 @@ var path = require('path')
 var request = require('request')
 var postDetails = require('./serverApis/postDetails');
 
-const port = (process.env.PORT || 8086)
+const port = (process.env.PORT || 8087)
 
 const app = express();
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
-app.post('/submitDetails', function(req, res) {
+app.post('/submitDetails', function(req, response) {
       console.log(req.query)
-      postDetails.postDetails(req.query)
-        .then((result) => res.send(result))
-        .catch((error) => res.status(error.statusCode).send(error.text));
+      var result = postDetails.postDetails(req.query, function callback(request, res){
+        response.send(request)
+      });
 });
 
 // If we are running in dev mode, use hot reloading

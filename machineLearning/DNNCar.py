@@ -15,6 +15,8 @@ import config
 CAR_DATA = "car_training.csv"
 CAR_DATA_URL = config.CAR_DATA_URL
 
+classifier = None
+
 def main():
   # If the training and test sets aren't stored locally, download them.
   if not os.path.exists(CAR_DATA):
@@ -44,6 +46,7 @@ def main():
   feature_columns = [tf.feature_column.numeric_column("x", shape=[6])]
 
   # Build 4 layer DNN with 10, 20, 10 units respectively.
+  global classifier
   classifier = tf.estimator.DNNClassifier(feature_columns=feature_columns,
                                           hidden_units=[10, 20, 10],
                                           n_classes=4,
@@ -70,7 +73,7 @@ def main():
         train_values.append(x)
         train_keys.append(t_vals[i])
 
-    i = i+1    
+    i = i+1
 
  # rand_index = np.random.choice(len(d_vals), size=1200)
  # test_values =d_vals[]
@@ -79,7 +82,7 @@ def main():
  # train_keys = t_vals[:,rand_index]
  # print(np.array(rand_index))
 
- 
+
   print(len(train_values))
   print(len(test_values))
   #training_set = tf.data.Dataset.from_tensor_slices(d_vals)
@@ -90,7 +93,7 @@ def main():
       y=np.array(train_keys),
       num_epochs=None,
       shuffle=True)
-    
+
 
   # Train model.
   classifier.train(input_fn=train_input_fn, steps=2000)
@@ -107,21 +110,40 @@ def main():
 
   print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
 
-  # Classify two new flower samples.
-  #new_samples = np.array(
-#      [[6.4, 3.2, 4.5, 1.5],
-       #[5.8, 3.1, 5.0, 1.7]], dtype=np.float32)
-  #predict_input_fn = tf.estimator.inputs.numpy_input_fn(
-      #x={"x": new_samples},
-      #num_epochs=1,
-      #shuffle=False)
+  #Classify two new car samples.
+  new_samples = np.array(
+    [[1, 2, 3, 1, 2, 1],
+     [2, 3, 2, 3, 1, 2]], dtype=np.float32)
 
-  #predictions = list(classifier.predict(input_fn=predict_input_fn))
-  #predicted_classes = [p["classes"] for p in predictions]
 
-  #print(
-      #"New Samples, Class Predictions:    {}\n"
-      #.format(predicted_classes))
+  predict_input_fn = tf.estimator.inputs.numpy_input_fn(
+  x={"x": new_samples},
+  num_epochs=1,
+  shuffle=False)
+
+  predictions = list(classifier.predict(input_fn=predict_input_fn))
+  predicted_classes = [p["classes"] for p in predictions]
+
+  print(
+      "New Samples, Class Predictions:    {}\n"
+      .format(predicted_classes))
+
+  classifyNew([1,2,1,3,2,1])
+
+def classifyNew(new_data):
+    new_samples = np.array([new_data], dtype=np.float32)
+    predict_input_fn = tf.estimator.inputs.numpy_input_fn(
+    x={"x": new_samples},
+    num_epochs=1,
+    shuffle=False)
+
+    predictions = list(classifier.predict(input_fn=predict_input_fn))
+    predicted_classes = [p["classes"] for p in predictions]
+
+    print(
+        "New Samples, Class Predictions:    {}\n"
+        .format(predicted_classes))
+    return predicted_classes
 
 if __name__ == "__main__":
     main()

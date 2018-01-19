@@ -5,6 +5,8 @@ import * as types from '../constants/actionTypes'
 export function* submitDetals(action){
     try {
       const response =  yield call(submitDetailsApi, action);
+      console.log(response)
+      yield put({type: types.SET_DETAILS_RESPONSE, chance: response.data});
     } catch(err) {
       console.dir(err);
     }
